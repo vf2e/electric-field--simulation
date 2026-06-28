@@ -8,6 +8,7 @@ class AppControllerTest : public QObject
 
 private slots:
     void themeNames_hasFourEntries();
+    void headMaterialNames_hasSixEntries();
     void themePalette_containsRequiredKeys();
     void setLutMin_clampsBelowMax();
     void setLutMax_clampsAboveMin();
@@ -20,6 +21,13 @@ void AppControllerTest::themeNames_hasFourEntries()
 {
     AppController controller;
     QCOMPARE(controller.themeNames().size(), 4);
+}
+
+void AppControllerTest::headMaterialNames_hasSixEntries()
+{
+    AppController controller;
+    QCOMPARE(controller.headMaterialNames().size(), 6);
+    QCOMPARE(controller.headMaterialNames().first(), QStringLiteral("经典 Phong"));
 }
 
 void AppControllerTest::themePalette_containsRequiredKeys()

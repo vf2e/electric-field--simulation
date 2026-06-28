@@ -6,9 +6,11 @@
 #include <openctm.h>
 #include <vtkCellArray.h>
 #include <vtkFloatArray.h>
+#include <vtkNew.h>
 #include <vtkOBJReader.h>
 #include <vtkPointData.h>
 #include <vtkPoints.h>
+#include <vtkPolyDataNormals.h>
 
 #include <cstring>
 
@@ -61,7 +63,30 @@ bool ModelLoader::loadModel(const QString &source, QString *errorMessage)
         return false;
     }
 
+    if (m_smoothNormalsEnabled) {
+        applySmoothNormals();
+    }
     return true;
+}
+
+void ModelLoader::applySmoothNormals()
+{
+    if (!m_polyData || m_polyData->GetNumberOfPoints() == 0) {
+        return;
+    }
+
+    vtkNew<vtkPolyDataNormals> normalsFilter;
+    normalsFilter->SetInputData(m_polyData);
+    normalsFilter->ComputePointNormalsOn();
+    normalsFilter->ComputeCellNormalsOff();
+    normalsFilter->SplittingOff();
+    normalsFilter->ConsistencyOn();
+    normalsFilter->AutoOrientNormalsOn();
+    normalsFilter->SetFeatureAngle(60.0);
+    normalsFilter->Update();
+
+    m_polyData->ShallowCopy(normalsFilter->GetOutput());
+    m_hasNormals = m_polyData->GetPointData()->GetNormals() != nullptr;
 }
 
 void ModelLoader::loadCTM(const QString &filePath, QString *errorMessage)

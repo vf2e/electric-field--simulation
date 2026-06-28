@@ -47,6 +47,8 @@ public:
     ~VtkRenderWidget() override;
 
     bool loadSimulationScene(const QString &assetRoot, QString *errorMessage = nullptr);
+    void setSmoothNormalsEnabled(bool enabled);
+    bool smoothNormalsEnabled() const { return m_smoothNormalsEnabled; }
     void setModel(vtkSmartPointer<vtkPolyData> polyData);
     void setSimulationEnabled(bool enabled);
     void setSimulateIntensity(int percent);
@@ -57,6 +59,8 @@ public:
     CoilPose defaultCoilPose() const;
     CoilPose coilPose() const;
     void setHeadOpacity(double opacity);
+    void setHeadMaterialIndex(int index);
+    int headMaterialIndex() const { return m_headMaterialIndex; }
     void setBrainOpacity(double opacity);
     void setCoilOpacity(double opacity);
     void setOpacity(double opacity, bool immediate = true);
@@ -108,6 +112,13 @@ private:
     void setupFpsObserver();
     void setupTransparencyRendering();
     void applySurfaceQuality(vtkActor *actor, double opacity, bool offsetCoincident);
+    void applyHeadMaterial();
+    bool loadSceneMeshes(const QString &assetRoot,
+                         vtkSmartPointer<vtkPolyData> &headData,
+                         vtkSmartPointer<vtkPolyData> &brainData,
+                         vtkSmartPointer<vtkPolyData> &coilData,
+                         QString *errorMessage);
+    bool reloadSceneMeshes(QString *errorMessage = nullptr);
     void updateCoilVisibility();
     void onRenderEnd();
 
@@ -140,6 +151,7 @@ private:
     double m_roamProgress;
     double m_currentFps;
     double m_headOpacity;
+    int m_headMaterialIndex;
     double m_brainOpacity;
     double m_coilOpacity;
     int m_simulateIntensity;
@@ -151,6 +163,8 @@ private:
     bool m_hasInitialCamera;
     bool m_vtkInitialized;
     bool m_sceneReady;
+    bool m_smoothNormalsEnabled;
+    QString m_assetRoot;
 };
 
 #endif

@@ -18,6 +18,8 @@ class AppController : public QObject
     Q_PROPERTY(bool simulationEnabled READ simulationEnabled WRITE setSimulationEnabled NOTIFY simulationEnabledChanged)
     Q_PROPERTY(int intensity READ intensity WRITE setIntensity NOTIFY intensityChanged)
     Q_PROPERTY(int headOpacity READ headOpacity WRITE setHeadOpacity NOTIFY headOpacityChanged)
+    Q_PROPERTY(int headMaterialIndex READ headMaterialIndex WRITE setHeadMaterialIndex NOTIFY headMaterialIndexChanged)
+    Q_PROPERTY(bool smoothNormals READ smoothNormals WRITE setSmoothNormals NOTIFY smoothNormalsChanged)
     Q_PROPERTY(int lutMin READ lutMin WRITE setLutMin NOTIFY lutRangeChanged)
     Q_PROPERTY(int lutMax READ lutMax WRITE setLutMax NOTIFY lutRangeChanged)
     Q_PROPERTY(bool fpsOverlay READ fpsOverlay WRITE setFpsOverlay NOTIFY fpsOverlayChanged)
@@ -42,6 +44,8 @@ public:
     bool simulationEnabled() const { return m_simulationEnabled; }
     int intensity() const { return m_intensity; }
     int headOpacity() const { return m_headOpacity; }
+    int headMaterialIndex() const { return m_headMaterialIndex; }
+    bool smoothNormals() const { return m_smoothNormals; }
     int lutMin() const { return m_lutMin; }
     int lutMax() const { return m_lutMax; }
     bool fpsOverlay() const { return m_fpsOverlay; }
@@ -62,6 +66,7 @@ public:
     Q_INVOKABLE void resetCamera();
     Q_INVOKABLE QString assetsRoot() const;
     Q_INVOKABLE QStringList themeNames() const;
+    Q_INVOKABLE QStringList headMaterialNames() const;
     Q_INVOKABLE QString themeAccent(int index) const;
     Q_INVOKABLE QString themeSwatchGradient(int index) const;
     Q_INVOKABLE QVariantMap themePalette(int index) const;
@@ -74,6 +79,8 @@ public slots:
     void setSimulationEnabled(bool enabled);
     void setIntensity(int value);
     void setHeadOpacity(int value);
+    void setHeadMaterialIndex(int index);
+    void setSmoothNormals(bool enabled);
     void setLutMin(int value);
     void setLutMax(int value);
     void setFpsOverlay(bool enabled);
@@ -93,6 +100,8 @@ signals:
     void simulationEnabledChanged();
     void intensityChanged();
     void headOpacityChanged();
+    void headMaterialIndexChanged();
+    void smoothNormalsChanged();
     void lutRangeChanged();
     void fpsOverlayChanged();
     void coilModelVisibleChanged();
@@ -116,6 +125,9 @@ private:
     bool m_simulationEnabled = true;
     int m_intensity = 50;
     int m_headOpacity = 50;
+    int m_headMaterialIndex = 0;
+    bool m_smoothNormals = false;
+    QString m_lastUserModelPath;
     int m_lutMin = 40;
     int m_lutMax = 150;
     bool m_fpsOverlay = true;

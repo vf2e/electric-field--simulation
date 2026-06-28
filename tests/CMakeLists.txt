@@ -6,6 +6,7 @@ set(CTM_TEST_CORE_SOURCES
     ${CMAKE_SOURCE_DIR}/src/FieldColorMap.cpp
     ${CMAKE_SOURCE_DIR}/src/FieldSimulator.cpp
     ${CMAKE_SOURCE_DIR}/src/ModelLoader.cpp
+    ${CMAKE_SOURCE_DIR}/src/HeadMaterial.cpp
     ${CMAKE_SOURCE_DIR}/src/AppController.cpp
     ${CMAKE_SOURCE_DIR}/src/VtkRenderWidget.cpp
 )

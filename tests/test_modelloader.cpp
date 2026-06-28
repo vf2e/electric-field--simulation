@@ -4,6 +4,7 @@
 
 #include <QFileInfo>
 #include <QtTest>
+#include <vtkPointData.h>
 
 class ModelLoaderTest : public QObject
 {
@@ -16,6 +17,8 @@ private slots:
     void loadModel_missingFile_fails();
     void loadModel_triangleObj_succeeds();
     void loadModel_triangleObj_hasExpectedCounts();
+    void loadModel_smoothNormalsDisabled_byDefault();
+    void loadModel_smoothNormalsEnabled_computesNormals();
 
 private:
     QString m_triangleObjPath;
@@ -65,11 +68,29 @@ void ModelLoaderTest::loadModel_triangleObj_succeeds()
 void ModelLoaderTest::loadModel_triangleObj_hasExpectedCounts()
 {
     ModelLoader loader;
+    loader.setSmoothNormalsEnabled(true);
     QVERIFY(loader.loadModel(m_triangleObjPath));
     QCOMPARE(loader.vertexCount(), 3);
     QCOMPARE(loader.triangleCount(), 1);
-    QVERIFY(!loader.hasNormals());
+    QVERIFY(loader.hasNormals());
+    QVERIFY(loader.polyData()->GetPointData()->GetNormals() != nullptr);
     QVERIFY(!loader.hasTexCoords());
+}
+
+void ModelLoaderTest::loadModel_smoothNormalsDisabled_byDefault()
+{
+    ModelLoader loader;
+    QVERIFY(loader.loadModel(m_triangleObjPath));
+    QVERIFY(!loader.hasNormals());
+    QVERIFY(loader.polyData()->GetPointData()->GetNormals() == nullptr);
+}
+
+void ModelLoaderTest::loadModel_smoothNormalsEnabled_computesNormals()
+{
+    ModelLoader loader;
+    loader.setSmoothNormalsEnabled(true);
+    QVERIFY(loader.loadModel(m_triangleObjPath));
+    QVERIFY(loader.hasNormals());
 }
 
 QTEST_APPLESS_MAIN(ModelLoaderTest)

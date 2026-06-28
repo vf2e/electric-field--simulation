@@ -16,6 +16,7 @@
 #include <QTimer>
 #include <QVBoxLayout>
 #include <QPalette>
+#include <QSurfaceFormat>
 #include <QVariantMap>
 
 ApplicationShell::ApplicationShell(AppController *controller, QWidget *parent)
@@ -103,22 +104,32 @@ ApplicationShell::ApplicationShell(AppController *controller, QWidget *parent)
 void ApplicationShell::setupQuickWidget(QQuickWidget *widget, const QUrl &sourceUrl, bool transparent)
 {
     widget->setResizeMode(QQuickWidget::SizeRootObjectToView);
-    widget->setAttribute(Qt::WA_OpaquePaintEvent, !transparent);
+
+    if (transparent) {
+        QSurfaceFormat format = widget->format();
+        format.setAlphaBufferSize(8);
+        widget->setFormat(format);
+        widget->setAttribute(Qt::WA_TranslucentBackground, true);
+        widget->setAttribute(Qt::WA_NoSystemBackground, true);
+        widget->setAttribute(Qt::WA_OpaquePaintEvent, false);
+        widget->setStyleSheet(QStringLiteral("background: transparent;"));
+    } else {
+        widget->setAttribute(Qt::WA_OpaquePaintEvent, true);
+        widget->setAttribute(Qt::WA_TranslucentBackground, false);
+        widget->setStyleSheet(QString());
+    }
 
     if (m_controller) {
         widget->rootContext()->setContextProperty(QStringLiteral("App"), m_controller);
     }
 
-    QColor clearColor;
-    if (transparent) {
-        clearColor = Qt::transparent;
-    } else {
-        clearColor = QColor(m_controller
-                                ? m_controller->themePalette(m_controller->themeIndex())
-                                      .value(QStringLiteral("clrBg"), QStringLiteral("#F5F8FD"))
-                                      .toString()
-                                : QStringLiteral("#F5F8FD"));
-    }
+    const QColor clearColor(transparent
+                                ? QColor(0, 0, 0, 0)
+                                : QColor(m_controller
+                                               ? m_controller->themePalette(m_controller->themeIndex())
+                                                     .value(QStringLiteral("clrBg"), QStringLiteral("#F5F8FD"))
+                                                     .toString()
+                                               : QStringLiteral("#F5F8FD")));
     widget->setClearColor(clearColor);
 
     widget->setSource(sourceUrl);

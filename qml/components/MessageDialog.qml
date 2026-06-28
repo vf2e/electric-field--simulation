@@ -10,9 +10,10 @@ Popup {
     property string message: ""
     property string dialogTitle: qsTr("提示")
 
-    modal: true
+    modal: false
+    dim: false
     focus: true
-    closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
+    closePolicy: Popup.CloseOnEscape
     padding: 0
     width: 400
     implicitHeight: contentLayout.implicitHeight

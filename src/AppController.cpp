@@ -1,5 +1,6 @@
 #include "AppController.h"
 
+#include "HeadMaterial.h"
 #include "ModelLoader.h"
 #include "VtkRenderWidget.h"
 
@@ -67,6 +68,9 @@ void AppController::setViewer(VtkRenderWidget *viewer)
     }
 
     connect(m_viewer, &VtkRenderWidget::coilPoseChanged, this, &AppController::onCoilPoseFromViewer);
+    m_viewer->setHeadOpacity(m_headOpacity / 100.0);
+    m_viewer->setHeadMaterialIndex(m_headMaterialIndex);
+    m_viewer->setSmoothNormalsEnabled(m_smoothNormals);
     applyTheme(m_theme);
 }
 
@@ -86,6 +90,11 @@ QStringList AppController::themeNames() const
         names.append(entry.name);
     }
     return names;
+}
+
+QStringList AppController::headMaterialNames() const
+{
+    return HeadMaterial::materialNames();
 }
 
 QString AppController::themeAccent(int index) const
@@ -265,11 +274,14 @@ void AppController::openFile(const QString &filePath)
     m_viewer->ensureInitialized();
 
     ModelLoader loader;
+    loader.setSmoothNormalsEnabled(m_smoothNormals);
     QString error;
     if (!loader.loadModel(filePath, &error)) {
         emit errorOccurred(error.isEmpty() ? QStringLiteral("模型加载失败") : error);
         return;
     }
+
+    m_lastUserModelPath = filePath;
 
     m_viewer->setModel(loader.polyData());
     const QString name = QFileInfo(filePath).fileName();
@@ -351,6 +363,34 @@ void AppController::setHeadOpacity(int value)
         m_viewer->setHeadOpacity(value / 100.0);
     }
     emit headOpacityChanged();
+}
+
+void AppController::setHeadMaterialIndex(int index)
+{
+    index = std::clamp(index, 0, HeadMaterial::materialNames().size() - 1);
+    if (m_headMaterialIndex == index) {
+        return;
+    }
+    m_headMaterialIndex = index;
+    if (m_viewer) {
+        m_viewer->setHeadMaterialIndex(index);
+    }
+    emit headMaterialIndexChanged();
+}
+
+void AppController::setSmoothNormals(bool enabled)
+{
+    if (m_smoothNormals == enabled) {
+        return;
+    }
+    m_smoothNormals = enabled;
+    if (m_viewer) {
+        m_viewer->setSmoothNormalsEnabled(enabled);
+    }
+    if (!m_lastUserModelPath.isEmpty()) {
+        openFile(m_lastUserModelPath);
+    }
+    emit smoothNormalsChanged();
 }
 
 void AppController::setLutMin(int value)

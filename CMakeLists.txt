@@ -37,6 +37,7 @@ set(SOURCES
     src/AppController.cpp
     src/VtkRenderWidget.cpp
     src/ModelLoader.cpp
+    src/HeadMaterial.cpp
     src/FieldColorMap.cpp
     src/FieldSimulator.cpp
 )
@@ -46,6 +47,7 @@ set(HEADERS
     src/AppController.h
     src/VtkRenderWidget.h
     src/ModelLoader.h
+    src/HeadMaterial.h
     src/FieldColorMap.h
     src/FieldSimulator.h
     src/AppTheme.h

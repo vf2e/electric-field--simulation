@@ -8,193 +8,256 @@ Popup {
 
     property var themeColors: ({})
 
-    modal: true
+    modal: false
+    dim: false
     focus: true
-    closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
+    closePolicy: Popup.CloseOnEscape
     padding: 0
-    width: 520
-    implicitHeight: contentLayout.implicitHeight
+    width: shell.width
+    height: shell.height
 
     background: Item {}
 
-    onAboutToShow: {
-        originalTheme = App.themeIndex
-        selectedTheme = App.themeIndex
-    }
-
-    property int originalTheme: App.themeIndex
     property int selectedTheme: App.themeIndex
 
-    FlatCard {
-        anchors.fill: parent
-        themeColors: root.themeColors
-        useShadow: false
-        cardRadius: 12
+    function cancelAndClose() {
+        close()
+    }
 
-        ColumnLayout {
-            id: contentLayout
+    function applyAndClose() {
+        if (selectedTheme !== App.themeIndex) {
+            App.themeIndex = selectedTheme
+        }
+        close()
+    }
+
+    onAboutToShow: selectedTheme = App.themeIndex
+
+    Item {
+        id: shell
+        width: 560
+        height: dialogBody.height + 8
+
+        // 轻阴影（不用 QtGraphicalEffects）
+        Rectangle {
             anchors.fill: parent
-            anchors.margins: 0
-            spacing: 0
+            anchors.topMargin: 5
+            radius: 16
+            color: themeColors.shadowColor || "#18000000"
+        }
 
-            // 标题栏
-            RowLayout {
-                Layout.fillWidth: true
-                Layout.preferredHeight: 56
-                Layout.leftMargin: 24
-                Layout.rightMargin: 16
-                spacing: 12
+        Rectangle {
+            id: dialogBody
+            width: parent.width
+            height: contentLayout.implicitHeight
+            radius: 16
+            color: themeColors.clrCard || "#FFFFFF"
+            border.width: 1
+            border.color: themeColors.clrBorder || "#E2E8F0"
+
+            ColumnLayout {
+                id: contentLayout
+                anchors.fill: parent
+                spacing: 0
+
+                RowLayout {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 72
+                    Layout.leftMargin: 24
+                    Layout.rightMargin: 16
+                    spacing: 14
+
+                    Rectangle {
+                        Layout.preferredWidth: 44
+                        Layout.preferredHeight: 44
+                        radius: 12
+                        color: themeColors.primarySoft || "#DBEAFE"
+                        border.width: 1
+                        border.color: "#93C5FD"
+
+                        Text {
+                            anchors.centerIn: parent
+                            text: "Aa"
+                            color: themeColors.clrPrimary || "#2563EB"
+                            font.pixelSize: 18
+                            font.bold: true
+                        }
+                    }
+
+                    ColumnLayout {
+                        Layout.fillWidth: true
+                        spacing: 4
+
+                        Text {
+                            text: qsTr("外观设置")
+                            color: themeColors.clrTitle || "#0F172A"
+                            font.pixelSize: 20
+                            font.bold: true
+                        }
+
+                        Text {
+                            text: qsTr("选择界面主题，点击「完成」后应用")
+                            color: themeColors.clrSubText || "#64748B"
+                            font.pixelSize: 13
+                            Layout.fillWidth: true
+                            wrapMode: Text.WordWrap
+                        }
+                    }
+
+                    FlatIconButton {
+                        text: "✕"
+                        themeColors: root.themeColors
+                        onClicked: root.cancelAndClose()
+                    }
+                }
+
+                Rectangle {
+                    Layout.fillWidth: true
+                    height: 1
+                    color: themeColors.clrBorder || "#E2E8F0"
+                }
 
                 ColumnLayout {
                     Layout.fillWidth: true
-                    spacing: 2
+                    Layout.margins: 24
+                    spacing: 14
 
-                    Text {
-                        text: qsTr("外观设置")
-                        color: themeColors.clrTitle || "#0F172A"
-                        font.pixelSize: 18
-                        font.bold: true
+                    FlatSectionLabel {
+                        text: qsTr("主题方案")
+                        themeColors: root.themeColors
                     }
 
-                    Text {
-                        text: qsTr("选择界面主题，实时预览三维视口背景")
-                        color: themeColors.clrSubText || "#64748B"
-                        font.pixelSize: 13
+                    GridLayout {
                         Layout.fillWidth: true
-                        elide: Text.ElideRight
-                    }
-                }
+                        columns: 2
+                        columnSpacing: 14
+                        rowSpacing: 14
 
-                FlatIconButton {
-                    text: "✕"
-                    themeColors: root.themeColors
-                    onClicked: root.close()
-                }
-            }
+                        Repeater {
+                            model: App.themeNames()
 
-            Rectangle {
-                Layout.fillWidth: true
-                height: 1
-                color: themeColors.clrBorder || "#E2E8F0"
-            }
+                            AbstractButton {
+                                id: themeBtn
+                                Layout.fillWidth: true
+                                Layout.preferredHeight: 108
+                                checkable: true
+                                checked: selectedTheme === index
 
-            ColumnLayout {
-                Layout.fillWidth: true
-                Layout.margins: 24
-                spacing: 16
+                                readonly property var themePalette: App.themePalette(index)
 
-                FlatSectionLabel {
-                    text: qsTr("主题")
-                    themeColors: root.themeColors
-                }
+                                onClicked: selectedTheme = index
 
-                GridLayout {
-                    Layout.fillWidth: true
-                    columns: 2
-                    columnSpacing: 12
-                    rowSpacing: 12
+                                background: Rectangle {
+                                    radius: 12
+                                    color: themeBtn.checked
+                                           ? (themeColors.primarySoft || "#DBEAFE")
+                                           : (themeBtn.hovered ? "#F8FAFC" : (themeColors.clrCard || "#FFFFFF"))
+                                    border.width: themeBtn.checked ? 2 : 1
+                                    border.color: themeBtn.checked
+                                                  ? (themeColors.clrPrimary || "#3B82F6")
+                                                  : (themeBtn.hovered ? "#93C5FD" : (themeColors.clrBorder || "#E2E8F0"))
+                                    Behavior on color { ColorAnimation { duration: 140 } }
+                                    Behavior on border.color { ColorAnimation { duration: 140 } }
+                                }
 
-                    Repeater {
-                        model: App.themeNames()
+                                contentItem: Item {
+                                    anchors.fill: parent
+                                    anchors.margins: 14
 
-                        AbstractButton {
-                            Layout.fillWidth: true
-                            Layout.preferredHeight: 96
-                            checkable: true
-                            checked: selectedTheme === index
+                                    Row {
+                                        anchors.top: parent.top
+                                        anchors.horizontalCenter: parent.horizontalCenter
+                                        spacing: 6
 
-                            onClicked: {
-                                selectedTheme = index
-                                App.themeIndex = index
-                            }
+                                        Rectangle {
+                                            width: 52
+                                            height: 28
+                                            radius: 6
+                                            color: themeBtn.themePalette.clrBg || "#F5F8FD"
+                                            border.width: 1
+                                            border.color: "#20000000"
+                                        }
 
-                            background: Rectangle {
-                                radius: 10
-                                color: checked ? (themeColors.primarySoft || "#DBEAFE")
-                                               : (parent.hovered ? "#F8FAFC" : "#FFFFFF")
-                                border.width: checked ? 2 : 1
-                                border.color: checked ? (themeColors.clrPrimary || "#3B82F6")
-                                                      : (parent.hovered ? "#93C5FD" : (themeColors.clrBorder || "#E2E8F0"))
-                                Behavior on color { ColorAnimation { duration: 120 } }
-                                Behavior on border.color { ColorAnimation { duration: 120 } }
-                            }
+                                        Rectangle {
+                                            width: 52
+                                            height: 28
+                                            radius: 6
+                                            color: themeBtn.themePalette.clrCard || "#FFFFFF"
+                                            border.width: 1
+                                            border.color: themeColors.clrBorder || "#E2E8F0"
+                                        }
 
-                            contentItem: Column {
-                                anchors.centerIn: parent
-                                spacing: 10
-
-                                Rectangle {
-                                    id: themeSwatch
-                                    width: 128
-                                    height: 32
-                                    radius: 6
-                                    anchors.horizontalCenter: parent.horizontalCenter
-
-                                    property color swatchStart: App.themeAccent(index)
-                                    property color swatchEnd: {
-                                        var palette = App.themePalette(index)
-                                        return palette.clrPrimaryHover || "#2563EB"
+                                        Rectangle {
+                                            width: 52
+                                            height: 28
+                                            radius: 6
+                                            color: themeBtn.themePalette.clrPrimary || "#3B82F6"
+                                        }
                                     }
 
-                                    gradient: Gradient {
-                                        orientation: Gradient.Horizontal
-                                        GradientStop { position: 0.0; color: themeSwatch.swatchStart }
-                                        GradientStop { position: 1.0; color: themeSwatch.swatchEnd }
+                                    Text {
+                                        anchors.bottom: parent.bottom
+                                        anchors.horizontalCenter: parent.horizontalCenter
+                                        text: modelData
+                                        color: themeBtn.checked
+                                               ? (themeColors.clrPrimary || "#1D4ED8")
+                                               : (themeColors.clrText || "#334155")
+                                        font.pixelSize: 14
+                                        font.bold: themeBtn.checked
                                     }
 
                                     Rectangle {
-                                        anchors.fill: parent
-                                        radius: 6
-                                        color: "transparent"
-                                        border.width: 1
-                                        border.color: "#20000000"
-                                    }
-                                }
+                                        visible: themeBtn.checked
+                                        anchors.top: parent.top
+                                        anchors.right: parent.right
+                                        width: 22
+                                        height: 22
+                                        radius: 11
+                                        color: themeColors.clrPrimary || "#3B82F6"
 
-                                Text {
-                                    text: modelData
-                                    anchors.horizontalCenter: parent.horizontalCenter
-                                    color: parent.parent.checked ? (themeColors.clrPrimary || "#1D4ED8") : (themeColors.clrText || "#334155")
-                                    font.pixelSize: 13
-                                    font.bold: parent.parent.checked
+                                        Text {
+                                            anchors.centerIn: parent
+                                            text: "✓"
+                                            color: "#FFFFFF"
+                                            font.pixelSize: 12
+                                            font.bold: true
+                                        }
+                                    }
                                 }
                             }
                         }
                     }
                 }
-            }
 
-            Rectangle {
-                Layout.fillWidth: true
-                height: 1
-                color: themeColors.clrBorder || "#E2E8F0"
-            }
-
-            RowLayout {
-                Layout.fillWidth: true
-                Layout.margins: 20
-                Layout.preferredHeight: 38
-                spacing: 12
-
-                Item { Layout.fillWidth: true }
-
-                FlatButton {
-                    text: qsTr("取消")
-                    tone: "secondary"
-                    themeColors: root.themeColors
-                    implicitWidth: 92
-                    onClicked: {
-                        App.themeIndex = originalTheme
-                        root.close()
-                    }
+                Rectangle {
+                    Layout.fillWidth: true
+                    height: 1
+                    color: themeColors.clrBorder || "#E2E8F0"
                 }
 
-                FlatButton {
-                    text: qsTr("完成")
-                    tone: "primary"
-                    themeColors: root.themeColors
-                    implicitWidth: 104
-                    onClicked: root.close()
+                RowLayout {
+                    Layout.fillWidth: true
+                    Layout.margins: 20
+                    Layout.preferredHeight: 40
+                    spacing: 12
+
+                    Item { Layout.fillWidth: true }
+
+                    FlatButton {
+                        text: qsTr("取消")
+                        tone: "secondary"
+                        themeColors: root.themeColors
+                        implicitWidth: 96
+                        onClicked: root.cancelAndClose()
+                    }
+
+                    FlatButton {
+                        text: qsTr("完成")
+                        tone: "primary"
+                        themeColors: root.themeColors
+                        implicitWidth: 108
+                        onClicked: root.applyAndClose()
+                    }
                 }
             }
         }

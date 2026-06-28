@@ -99,6 +99,14 @@ CollapsiblePanel {
         onToggled: App.simulationEnabled = checked
     }
 
+    FlatToggle {
+        width: parent.width
+        text: qsTr("法向平滑")
+        checked: App.smoothNormals
+        themeColors: root.themeColors
+        onToggled: App.smoothNormals = checked
+    }
+
     FlatDivider { width: parent.width; themeColors: root.themeColors }
 
     Text {
@@ -130,6 +138,59 @@ CollapsiblePanel {
         themeColors: root.themeColors
         onValueChanged: App.headOpacity = value
     }
+
+    Text {
+        text: qsTr("头模材质")
+        color: themeColors.clrSubText || "#64748B"
+        font.pixelSize: 11
+        font.bold: true
+    }
+
+    GridLayout {
+        width: parent.width
+        columns: 2
+        columnSpacing: 8
+        rowSpacing: 8
+
+        Repeater {
+            model: App.headMaterialNames()
+
+            AbstractButton {
+                id: materialBtn
+                Layout.fillWidth: true
+                Layout.preferredHeight: 34
+                checkable: true
+                checked: App.headMaterialIndex === index
+
+                onClicked: App.headMaterialIndex = index
+
+                contentItem: Text {
+                    text: modelData
+                    color: materialBtn.checked
+                           ? (themeColors.clrPrimary || "#2563EB")
+                           : (themeColors.clrText || "#334155")
+                    font.pixelSize: 12
+                    font.bold: materialBtn.checked
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+                    elide: Text.ElideRight
+                }
+
+                background: Rectangle {
+                    radius: 8
+                    color: materialBtn.checked
+                           ? (themeColors.primarySoft || "#DBEAFE")
+                           : (materialBtn.hovered ? "#F8FAFC" : "#FFFFFF")
+                    border.width: materialBtn.checked ? 2 : 1
+                    border.color: materialBtn.checked
+                                      ? (themeColors.clrPrimary || "#3B82F6")
+                                      : (themeColors.clrBorder || "#E2E8F0")
+                }
+            }
+        }
+    }
+
+    FlatDivider { width: parent.width; themeColors: root.themeColors }
 
     Text {
         text: qsTr("线圈拍位置 / 角度")

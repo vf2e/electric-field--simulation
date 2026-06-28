@@ -3,6 +3,7 @@
 30–60 分钟内完成环境搭建并成功运行 **QML 版**电场仿真查看器。
 
 > 架构细节见 [TECHNICAL.md](./TECHNICAL.md)  
+> **VTK 环境配置见 [VTK_ENVIRONMENT.md](./VTK_ENVIRONMENT.md)**  
 > 测试说明见 [TESTING.md](./TESTING.md)
 
 ---
@@ -27,7 +28,7 @@ UI 采用扁平化工业软件风格（Mag-aim Flat 设计体系）。
 | Visual Studio 2019+ | MSVC 工具链 |
 | CMake ≥ 3.16 | |
 | Qt 5.15.2 msvc2019_64 | 需 **Quick** 与 **Widgets** 模块 |
-| VTK 8.0 + OpenCTM | 来自 magaim-qt |
+| VTK 8.0 + OpenCTM | 来自 magaim-qt，详见 [VTK_ENVIRONMENT.md](./VTK_ENVIRONMENT.md) |
 
 ### magaim-qt 路径
 
@@ -92,7 +93,7 @@ cmake --build build --config Release
 | 启动白屏 | 检查 `qrc:/qml/main.qml` 是否编译进资源 |
 | 视口全黑 | 确认 `onViewerReady` 已调用 `loadDefaultSimulation` |
 | 模型/场数据缺失 | 确认 exe 旁 `assets/` 完整 |
-| VTK 找不到 | 检查 `MAGIMAIM_QT_ROOT` 与 DLL 是否复制 |
+| VTK 找不到 | 见 [VTK_ENVIRONMENT.md](./VTK_ENVIRONMENT.md) §9 |
 
 ---
 

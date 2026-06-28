@@ -1,8 +1,10 @@
 #include "VtkRenderWidget.h"
 
 #include "ModelLoader.h"
+#include "HeadMaterial.h"
 
 #include <QDir>
+#include <QDebug>
 #include <QElapsedTimer>
 #include <QRandomGenerator>
 #include <QResizeEvent>
@@ -57,6 +59,7 @@ VtkRenderWidget::VtkRenderWidget(QWidget *parent)
     , m_roamBoundsValid(false)
     , m_roamProgress(1.0)
     , m_headOpacity(0.55)
+    , m_headMaterialIndex(0)
     , m_brainOpacity(1.0)
     , m_coilOpacity(1.0)
     , m_simulateIntensity(50)
@@ -69,6 +72,7 @@ VtkRenderWidget::VtkRenderWidget(QWidget *parent)
     , m_hasInitialCamera(false)
     , m_vtkInitialized(false)
     , m_sceneReady(false)
+    , m_smoothNormalsEnabled(false)
 {
     setMinimumSize(640, 480);
     setFocusPolicy(Qt::StrongFocus);
@@ -384,6 +388,82 @@ void VtkRenderWidget::emitCoilPose()
     emit coilPoseChanged(m_pose.x, m_pose.y, m_pose.z, m_pose.rx, m_pose.ry, m_pose.rz);
 }
 
+bool VtkRenderWidget::loadSceneMeshes(const QString &assetRoot,
+                                      vtkSmartPointer<vtkPolyData> &headData,
+                                      vtkSmartPointer<vtkPolyData> &brainData,
+                                      vtkSmartPointer<vtkPolyData> &coilData,
+                                      QString *errorMessage)
+{
+    ModelLoader loader;
+    loader.setSmoothNormalsEnabled(m_smoothNormalsEnabled);
+
+    auto loadMesh = [&](const QString &relativePath, vtkSmartPointer<vtkPolyData> &target) -> bool {
+        const QString path = QDir(assetRoot).filePath(relativePath);
+        QString meshError;
+        if (!loader.loadModel(path, &meshError)) {
+            if (errorMessage) {
+                *errorMessage = meshError;
+            }
+            return false;
+        }
+        target = loader.polyData();
+        return true;
+    };
+
+    return loadMesh(QStringLiteral("models/head.ctm"), headData)
+        && loadMesh(QStringLiteral("models/brain_mask.ctm"), brainData)
+        && loadMesh(QStringLiteral("models/coil_b090c.ctm"), coilData);
+}
+
+bool VtkRenderWidget::reloadSceneMeshes(QString *errorMessage)
+{
+    if (!m_sceneReady || m_assetRoot.isEmpty()) {
+        return false;
+    }
+
+    vtkSmartPointer<vtkPolyData> headData;
+    vtkSmartPointer<vtkPolyData> brainData;
+    vtkSmartPointer<vtkPolyData> coilData;
+    if (!loadSceneMeshes(m_assetRoot, headData, brainData, coilData, errorMessage)) {
+        return false;
+    }
+
+    if (m_headActor && m_headActor->GetMapper()) {
+        m_headActor->GetMapper()->SetInputData(headData);
+        applyHeadMaterial();
+    }
+    if (m_coilActor && m_coilActor->GetMapper()) {
+        m_coilActor->GetMapper()->SetInputData(coilData);
+        applySurfaceQuality(m_coilActor, m_coilOpacity, false);
+    }
+
+    m_brainPolyData = brainData;
+    m_fieldSimulator.resetBrainColors(m_brainPolyData);
+    if (m_brainActor && m_brainActor->GetMapper()) {
+        m_brainActor->GetMapper()->SetInputData(m_brainPolyData);
+        applySurfaceQuality(m_brainActor, m_brainOpacity, false);
+    }
+
+    computeRoamBounds(headData);
+    updateFieldColors();
+    requestRender();
+    return true;
+}
+
+void VtkRenderWidget::setSmoothNormalsEnabled(bool enabled)
+{
+    if (m_smoothNormalsEnabled == enabled) {
+        return;
+    }
+    m_smoothNormalsEnabled = enabled;
+    if (m_sceneReady) {
+        QString error;
+        if (!reloadSceneMeshes(&error) && !error.isEmpty()) {
+            qWarning() << "Failed to reload scene meshes:" << error;
+        }
+    }
+}
+
 bool VtkRenderWidget::loadSimulationScene(const QString &assetRoot, QString *errorMessage)
 {
     ensureInitialized();
@@ -399,28 +479,14 @@ bool VtkRenderWidget::loadSimulationScene(const QString &assetRoot, QString *err
         return false;
     }
 
-    ModelLoader loader;
-    auto loadMesh = [&](const QString &relativePath, vtkSmartPointer<vtkPolyData> &target) -> bool {
-        const QString path = QDir(assetRoot).filePath(relativePath);
-        QString meshError;
-        if (!loader.loadModel(path, &meshError)) {
-            if (errorMessage) {
-                *errorMessage = meshError;
-            }
-            return false;
-        }
-        target = loader.polyData();
-        return true;
-    };
-
     vtkSmartPointer<vtkPolyData> headData;
     vtkSmartPointer<vtkPolyData> brainData;
     vtkSmartPointer<vtkPolyData> coilData;
-    if (!loadMesh(QStringLiteral("models/head.ctm"), headData)
-        || !loadMesh(QStringLiteral("models/brain_mask.ctm"), brainData)
-        || !loadMesh(QStringLiteral("models/coil_b090c.ctm"), coilData)) {
+    if (!loadSceneMeshes(assetRoot, headData, brainData, coilData, errorMessage)) {
         return false;
     }
+
+    m_assetRoot = assetRoot;
 
     if (m_headActor) {
         m_renderer->RemoveActor(m_headActor);
@@ -437,7 +503,7 @@ bool VtkRenderWidget::loadSimulationScene(const QString &assetRoot, QString *err
     computeRoamBounds(headData);
 
     m_headActor = createActor(headData, 0.42, 0.36, 0.32, m_headOpacity, false);
-    applySurfaceQuality(m_headActor, m_headOpacity, true);
+    applyHeadMaterial();
     m_brainActor = createActor(m_brainPolyData,
                                FieldColorMap::kBrainGray,
                                FieldColorMap::kBrainGray,
@@ -643,10 +709,29 @@ bool VtkRenderWidget::coilModelVisible() const
 void VtkRenderWidget::setHeadOpacity(double opacity)
 {
     m_headOpacity = qBound(0.0, opacity, 1.0);
-    if (m_headActor) {
-        applySurfaceQuality(m_headActor, m_headOpacity, true);
-        requestRender();
+    applyHeadMaterial();
+}
+
+void VtkRenderWidget::setHeadMaterialIndex(int index)
+{
+    const int clamped = std::clamp(index, 0, static_cast<int>(HeadMaterial::Id::Count) - 1);
+    if (m_headMaterialIndex == clamped) {
+        return;
     }
+    m_headMaterialIndex = clamped;
+    applyHeadMaterial();
+}
+
+void VtkRenderWidget::applyHeadMaterial()
+{
+    if (!m_headActor) {
+        return;
+    }
+    HeadMaterial::apply(m_headActor,
+                        m_renderWindow,
+                        HeadMaterial::idFromIndex(m_headMaterialIndex),
+                        m_headOpacity);
+    requestRender();
 }
 
 void VtkRenderWidget::setBrainOpacity(double opacity)
