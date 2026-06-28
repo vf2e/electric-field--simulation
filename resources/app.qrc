@@ -1,0 +1,25 @@
+<RCC>
+    <qresource prefix="/">
+        <file alias="icon.ico">../assets/icon.ico</file>
+    </qresource>
+    <qresource prefix="/qml">
+        <file alias="HeaderBar.qml">../qml/HeaderBar.qml</file>
+        <file alias="StatusBar.qml">../qml/StatusBar.qml</file>
+        <file alias="common/FlatButton.qml">../qml/common/FlatButton.qml</file>
+        <file alias="common/FlatCard.qml">../qml/common/FlatCard.qml</file>
+        <file alias="common/FlatSliderRow.qml">../qml/common/FlatSliderRow.qml</file>
+        <file alias="common/FlatTextField.qml">../qml/common/FlatTextField.qml</file>
+        <file alias="common/FlatToggle.qml">../qml/common/FlatToggle.qml</file>
+        <file alias="common/FlatDivider.qml">../qml/common/FlatDivider.qml</file>
+        <file alias="common/FlatIconButton.qml">../qml/common/FlatIconButton.qml</file>
+        <file alias="common/FlatSectionLabel.qml">../qml/common/FlatSectionLabel.qml</file>
+        <file alias="common/FlatModalScrim.qml">../qml/common/FlatModalScrim.qml</file>
+        <file alias="overlays/AppOverlay.qml">../qml/overlays/AppOverlay.qml</file>
+        <file alias="components/CollapsiblePanel.qml">../qml/components/CollapsiblePanel.qml</file>
+        <file alias="components/ColorBar.qml">../qml/components/ColorBar.qml</file>
+        <file alias="components/LeftControlPanel.qml">../qml/components/LeftControlPanel.qml</file>
+        <file alias="components/ColorBarPanel.qml">../qml/components/ColorBarPanel.qml</file>
+        <file alias="components/SettingsDialog.qml">../qml/components/SettingsDialog.qml</file>
+        <file alias="components/MessageDialog.qml">../qml/components/MessageDialog.qml</file>
+    </qresource>
+</RCC>
