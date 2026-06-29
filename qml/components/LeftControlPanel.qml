@@ -1,6 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
+import MagFont 1.0
 import "../common"
 import "./"
 
@@ -13,7 +14,7 @@ CollapsiblePanel {
     title: qsTr("调试面板")
     shortTitle: qsTr("调试")
     isLeft: true
-    expandedWidth: 300
+    expandedWidth: 320
 
     RowLayout {
         width: parent.width
@@ -46,13 +47,14 @@ CollapsiblePanel {
 
     AbstractButton {
         width: parent.width
-        implicitHeight: 38
+        implicitHeight: AppFont.ctlHeight
         onClicked: App.roamEnabled = !App.roamEnabled
 
         contentItem: Text {
             text: App.roamEnabled ? qsTr("漫游模式 · 开启") : qsTr("漫游模式")
             color: App.roamEnabled ? "#FFFFFF" : (themeColors.clrSubText || "#64748B")
-            font.pixelSize: 13
+            font.family: AppFont.family
+            font.pixelSize: AppFont.labelMedium
             font.bold: App.roamEnabled
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
@@ -68,11 +70,10 @@ CollapsiblePanel {
 
     FlatDivider { width: parent.width; themeColors: root.themeColors }
 
-    Text {
+    FlatSectionLabel {
+        width: parent.width
         text: qsTr("显示选项")
-        color: themeColors.clrSubText || "#64748B"
-        font.pixelSize: 11
-        font.bold: true
+        themeColors: root.themeColors
     }
 
     FlatToggle {
@@ -109,11 +110,10 @@ CollapsiblePanel {
 
     FlatDivider { width: parent.width; themeColors: root.themeColors }
 
-    Text {
+    FlatSectionLabel {
+        width: parent.width
         text: qsTr("仿真参数")
-        color: themeColors.clrSubText || "#64748B"
-        font.pixelSize: 11
-        font.bold: true
+        themeColors: root.themeColors
     }
 
     FlatSliderRow {
@@ -139,11 +139,10 @@ CollapsiblePanel {
         onValueChanged: App.headOpacity = value
     }
 
-    Text {
+    FlatSectionLabel {
+        width: parent.width
         text: qsTr("头模材质")
-        color: themeColors.clrSubText || "#64748B"
-        font.pixelSize: 11
-        font.bold: true
+        themeColors: root.themeColors
     }
 
     GridLayout {
@@ -158,7 +157,7 @@ CollapsiblePanel {
             AbstractButton {
                 id: materialBtn
                 Layout.fillWidth: true
-                Layout.preferredHeight: 34
+                Layout.preferredHeight: AppFont.ctlHeight
                 checkable: true
                 checked: App.headMaterialIndex === index
 
@@ -169,7 +168,8 @@ CollapsiblePanel {
                     color: materialBtn.checked
                            ? (themeColors.clrPrimary || "#2563EB")
                            : (themeColors.clrText || "#334155")
-                    font.pixelSize: 12
+                    font.family: AppFont.family
+                    font.pixelSize: AppFont.label
                     font.bold: materialBtn.checked
                     horizontalAlignment: Text.AlignHCenter
                     verticalAlignment: Text.AlignVCenter
@@ -192,11 +192,10 @@ CollapsiblePanel {
 
     FlatDivider { width: parent.width; themeColors: root.themeColors }
 
-    Text {
+    FlatSectionLabel {
+        width: parent.width
         text: qsTr("线圈拍位置 / 角度")
-        color: themeColors.clrSubText || "#64748B"
-        font.pixelSize: 11
-        font.bold: true
+        themeColors: root.themeColors
     }
 
     FlatSliderRow {

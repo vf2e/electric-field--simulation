@@ -21,5 +21,7 @@
         <file alias="components/ColorBarPanel.qml">../qml/components/ColorBarPanel.qml</file>
         <file alias="components/SettingsDialog.qml">../qml/components/SettingsDialog.qml</file>
         <file alias="components/MessageDialog.qml">../qml/components/MessageDialog.qml</file>
+        <file alias="MagFont/qmldir">../qml/MagFont/qmldir</file>
+        <file alias="MagFont/AppFont.qml">../qml/MagFont/AppFont.qml</file>
     </qresource>
 </RCC>

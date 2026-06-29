@@ -1,5 +1,6 @@
 import QtQuick 2.15
 import QtQuick.Layouts 1.15
+import MagFont 1.0
 
 Rectangle {
     id: root
@@ -26,8 +27,8 @@ Rectangle {
             Layout.alignment: Qt.AlignVCenter
 
             Rectangle {
-                width: 32
-                height: 32
+                width: 36
+                height: 36
                 radius: 8
                 color: themePalette.clrPrimary || "#3B82F6"
 
@@ -35,7 +36,8 @@ Rectangle {
                     anchors.centerIn: parent
                     text: "E"
                     color: "#FFFFFF"
-                    font.pixelSize: 16
+                    font.family: AppFont.family
+                    font.pixelSize: AppFont.title
                     font.bold: true
                 }
             }
@@ -47,14 +49,16 @@ Rectangle {
                 Text {
                     text: qsTr("EField Viewer")
                     color: themePalette.clrTitle || "#0F172A"
-                    font.pixelSize: 15
+                    font.family: AppFont.family
+                    font.pixelSize: AppFont.labelMedium
                     font.bold: true
                 }
 
                 Text {
                     text: qsTr("八字拍 · YRD-B9076 电场仿真")
                     color: themePalette.clrSubText || "#64748B"
-                    font.pixelSize: 11
+                    font.family: AppFont.family
+                    font.pixelSize: AppFont.caption
                 }
             }
         }
@@ -63,7 +67,7 @@ Rectangle {
 
         Rectangle {
             Layout.preferredWidth: statusChip.implicitWidth + 24
-            Layout.preferredHeight: 34
+            Layout.preferredHeight: AppFont.ctlHeight
             radius: 8
             color: themePalette.primarySoft || "#EFF6FF"
             border.width: 1
@@ -74,7 +78,8 @@ Rectangle {
                 anchors.centerIn: parent
                 text: App.simulationEnabled ? qsTr("仿真运行中") : qsTr("仿真已暂停")
                 color: themePalette.clrPrimary || "#1D4ED8"
-                font.pixelSize: 12
+                font.family: AppFont.family
+                font.pixelSize: AppFont.label
                 font.bold: true
             }
         }

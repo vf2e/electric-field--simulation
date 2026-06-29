@@ -7,6 +7,7 @@
 #include <QHBoxLayout>
 #include <QIcon>
 #include <QQmlContext>
+#include <QQmlEngine>
 #include <QQmlError>
 #include <QQuickItem>
 #include <QQuickWidget>
@@ -62,7 +63,7 @@ ApplicationShell::ApplicationShell(AppController *controller, QWidget *parent)
     workspace->setContentsMargins(12, 12, 12, 12);
     workspace->setSpacing(12);
 
-    m_leftPanel->setFixedWidth(300);
+    m_leftPanel->setFixedWidth(320);
     workspace->addWidget(m_leftPanel);
     workspace->addWidget(m_viewerHost, 1);
 
@@ -121,6 +122,10 @@ void ApplicationShell::setupQuickWidget(QQuickWidget *widget, const QUrl &source
 
     if (m_controller) {
         widget->rootContext()->setContextProperty(QStringLiteral("App"), m_controller);
+    }
+
+    if (QQmlEngine *engine = widget->engine()) {
+        engine->addImportPath(QStringLiteral("qrc:/qml"));
     }
 
     const QColor clearColor(transparent

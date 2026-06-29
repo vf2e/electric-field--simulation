@@ -1,18 +1,20 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
+import MagFont 1.0
 
 Button {
     id: root
 
     property var themeColors: ({})
 
-    implicitWidth: 34
-    implicitHeight: 34
+    implicitWidth: 38
+    implicitHeight: 38
     padding: 0
 
     contentItem: Text {
         text: root.text
-        font.pixelSize: 16
+        font.family: AppFont.family
+        font.pixelSize: AppFont.title
         font.bold: true
         color: hovered ? (themeColors.clrPrimary || "#2563EB") : (themeColors.clrSubText || "#64748B")
         horizontalAlignment: Text.AlignHCenter

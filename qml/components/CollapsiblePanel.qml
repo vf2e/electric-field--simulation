@@ -1,4 +1,5 @@
 import QtQuick 2.15
+import MagFont 1.0
 import "../common"
 
 Item {
@@ -60,7 +61,8 @@ Item {
                         transformOrigin: Item.Center
                         anchors.horizontalCenter: parent.horizontalCenter
                         color: themeColors.clrSubText || "#64748B"
-                        font.pixelSize: 11
+                        font.family: AppFont.family
+                        font.pixelSize: AppFont.caption
                         font.bold: true
                     }
                 }
@@ -83,10 +85,11 @@ Item {
                         Text {
                             text: title
                             color: themeColors.clrTitle || "#0F172A"
-                            font.pixelSize: 13
+                            font.family: AppFont.family
+                            font.pixelSize: AppFont.labelMedium
                             font.bold: true
                             verticalAlignment: Text.AlignVCenter
-                            height: 34
+                            height: AppFont.ctlHeight
                             width: parent.width - collapseBtn.width - 8
                             elide: Text.ElideRight
                         }

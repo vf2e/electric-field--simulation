@@ -2,6 +2,8 @@
 #include "AppController.h"
 
 #include <QApplication>
+#include <QFont>
+#include <QFontDatabase>
 #include <QIcon>
 #include <QQuickWindow>
 #include <QTimer>
@@ -23,6 +25,24 @@ int main(int argc, char *argv[])
     app.setApplicationName(QStringLiteral("EField Viewer"));
     app.setApplicationVersion(QStringLiteral("2.0.0"));
     app.setOrganizationName(QStringLiteral("Mag-aim"));
+
+    QFont appFont;
+    const QStringList preferredFamilies = {
+        QStringLiteral("SimHei"),
+        QStringLiteral("Microsoft YaHei"),
+        QStringLiteral("PingFang SC"),
+    };
+    for (const QString &family : preferredFamilies) {
+        if (QFontDatabase().hasFamily(family)) {
+            appFont.setFamily(family);
+            break;
+        }
+    }
+    if (appFont.family().isEmpty()) {
+        appFont.setFamily(QStringLiteral("Sans Serif"));
+    }
+    appFont.setPointSize(12);
+    app.setFont(appFont);
 
     const QIcon icon(QStringLiteral(":/icon.ico"));
     if (!icon.isNull()) {

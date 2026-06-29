@@ -1,0 +1,2 @@
+module MagFont
+singleton AppFont 1.0 AppFont.qml

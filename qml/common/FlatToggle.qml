@@ -1,5 +1,6 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
+import MagFont 1.0
 
 AbstractButton {
     id: root
@@ -7,7 +8,7 @@ AbstractButton {
     property var themeColors: ({})
 
     checkable: true
-    implicitHeight: 38
+    implicitHeight: AppFont.ctlHeight
     implicitWidth: parent ? parent.width : 280
     padding: 10
     leftPadding: 12
@@ -16,7 +17,8 @@ AbstractButton {
     contentItem: Text {
         text: root.text
         color: root.checked ? (themeColors.clrPrimary || "#1D4ED8") : (themeColors.clrSubText || "#64748B")
-        font.pixelSize: 13
+        font.family: AppFont.family
+        font.pixelSize: AppFont.labelMedium
         font.bold: root.checked
         horizontalAlignment: Text.AlignLeft
         verticalAlignment: Text.AlignVCenter

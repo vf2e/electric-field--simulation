@@ -71,6 +71,7 @@ void AppController::setViewer(VtkRenderWidget *viewer)
     m_viewer->setHeadOpacity(m_headOpacity / 100.0);
     m_viewer->setHeadMaterialIndex(m_headMaterialIndex);
     m_viewer->setSmoothNormalsEnabled(m_smoothNormals);
+    m_viewer->setFpsOverlayVisible(m_fpsOverlay);
     applyTheme(m_theme);
 }
 

@@ -1,6 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
+import MagFont 1.0
 import "../common"
 
 Popup {
@@ -15,7 +16,7 @@ Popup {
     focus: true
     closePolicy: Popup.CloseOnEscape
     padding: 0
-    width: 400
+    width: 420
     implicitHeight: contentLayout.implicitHeight
 
     background: Item {}
@@ -43,16 +44,17 @@ Popup {
                 spacing: 12
 
                 Rectangle {
-                    width: 44
-                    height: 44
-                    radius: 22
+                    width: 48
+                    height: 48
+                    radius: 24
                     color: themeColors.primarySoft || "#DBEAFE"
 
                     Text {
                         anchors.centerIn: parent
                         text: "!"
                         color: themeColors.clrPrimary || "#2563EB"
-                        font.pixelSize: 20
+                        font.family: AppFont.family
+                        font.pixelSize: AppFont.headline
                         font.bold: true
                     }
                 }
@@ -61,7 +63,8 @@ Popup {
                     Layout.fillWidth: true
                     text: dialogTitle
                     color: themeColors.clrTitle || "#0F172A"
-                    font.pixelSize: 18
+                    font.family: AppFont.family
+                    font.pixelSize: AppFont.title
                     font.bold: true
                     wrapMode: Text.WordWrap
                     maximumLineCount: 2
@@ -72,10 +75,11 @@ Popup {
             Text {
                 Layout.fillWidth: true
                 Layout.topMargin: 12
-                Layout.leftMargin: 56
+                Layout.leftMargin: 60
                 text: message
                 color: themeColors.clrText || "#475569"
-                font.pixelSize: 14
+                font.family: AppFont.family
+                font.pixelSize: AppFont.body
                 lineHeight: 1.35
                 wrapMode: Text.WordWrap
             }
@@ -88,7 +92,7 @@ Popup {
 
             Item {
                 Layout.fillWidth: true
-                Layout.preferredHeight: 58
+                Layout.preferredHeight: 62
 
                 FlatButton {
                     anchors.right: parent.right
@@ -96,7 +100,7 @@ Popup {
                     text: qsTr("知道了")
                     tone: "primary"
                     themeColors: root.themeColors
-                    implicitWidth: 104
+                    implicitWidth: 112
                     onClicked: root.close()
                 }
             }

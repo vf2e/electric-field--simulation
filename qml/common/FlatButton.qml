@@ -1,19 +1,21 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
+import MagFont 1.0
 
 Button {
     id: root
 
     property string tone: "secondary"   // primary | secondary | danger
-    property int ctlHeight: 38
+    property int ctlHeight: AppFont.ctlHeight
     property var themeColors: ({})
 
     implicitHeight: ctlHeight
-    implicitWidth: Math.max(92, contentItem.implicitWidth + 28)
+    implicitWidth: Math.max(96, contentItem.implicitWidth + 28)
     padding: 0
     leftPadding: 14
     rightPadding: 14
-    font.pixelSize: 14
+    font.family: AppFont.family
+    font.pixelSize: AppFont.body
     font.bold: tone === "primary" || tone === "danger"
 
     contentItem: Text {

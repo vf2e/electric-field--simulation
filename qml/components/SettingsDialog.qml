@@ -1,6 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
+import MagFont 1.0
 import "../common"
 
 Popup {
@@ -79,7 +80,8 @@ Popup {
                             anchors.centerIn: parent
                             text: "Aa"
                             color: themeColors.clrPrimary || "#2563EB"
-                            font.pixelSize: 18
+                            font.family: AppFont.family
+                            font.pixelSize: AppFont.headline
                             font.bold: true
                         }
                     }
@@ -91,14 +93,16 @@ Popup {
                         Text {
                             text: qsTr("外观设置")
                             color: themeColors.clrTitle || "#0F172A"
-                            font.pixelSize: 20
+                            font.family: AppFont.family
+                            font.pixelSize: AppFont.display
                             font.bold: true
                         }
 
                         Text {
                             text: qsTr("选择界面主题，点击「完成」后应用")
                             color: themeColors.clrSubText || "#64748B"
-                            font.pixelSize: 13
+                            font.family: AppFont.family
+                            font.pixelSize: AppFont.labelMedium
                             Layout.fillWidth: true
                             wrapMode: Text.WordWrap
                         }
@@ -202,7 +206,8 @@ Popup {
                                         color: themeBtn.checked
                                                ? (themeColors.clrPrimary || "#1D4ED8")
                                                : (themeColors.clrText || "#334155")
-                                        font.pixelSize: 14
+                                        font.family: AppFont.family
+                                        font.pixelSize: AppFont.body
                                         font.bold: themeBtn.checked
                                     }
 
@@ -219,7 +224,8 @@ Popup {
                                             anchors.centerIn: parent
                                             text: "✓"
                                             color: "#FFFFFF"
-                                            font.pixelSize: 12
+                                            font.family: AppFont.family
+                                            font.pixelSize: AppFont.label
                                             font.bold: true
                                         }
                                     }

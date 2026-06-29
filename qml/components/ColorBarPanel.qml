@@ -1,5 +1,6 @@
 import QtQuick 2.15
 import QtQuick.Layouts 1.15
+import MagFont 1.0
 import "../common"
 import "./"
 
@@ -37,7 +38,8 @@ CollapsiblePanel {
                 Layout.fillWidth: true
                 text: qsTr("V/m")
                 color: themeColors.clrSubText || "#64748B"
-                font.pixelSize: 11
+                font.family: AppFont.family
+                font.pixelSize: AppFont.caption
                 horizontalAlignment: Text.AlignHCenter
             }
 
@@ -71,14 +73,16 @@ CollapsiblePanel {
                     Text {
                         text: App.lutMax
                         color: themeColors.clrText || "#334155"
-                        font.pixelSize: 13
+                        font.family: AppFont.family
+                        font.pixelSize: AppFont.labelMedium
                         font.bold: true
                     }
 
                     Text {
                         text: qsTr("高")
                         color: themeColors.clrSubText || "#94A3B8"
-                        font.pixelSize: 10
+                        font.family: AppFont.family
+                        font.pixelSize: AppFont.micro
                     }
 
                     Item { Layout.fillHeight: true }
@@ -86,13 +90,15 @@ CollapsiblePanel {
                     Text {
                         text: qsTr("低")
                         color: themeColors.clrSubText || "#94A3B8"
-                        font.pixelSize: 10
+                        font.family: AppFont.family
+                        font.pixelSize: AppFont.micro
                     }
 
                     Text {
                         text: App.lutMin
                         color: themeColors.clrText || "#334155"
-                        font.pixelSize: 13
+                        font.family: AppFont.family
+                        font.pixelSize: AppFont.labelMedium
                         font.bold: true
                     }
                 }
@@ -122,8 +128,9 @@ CollapsiblePanel {
             Text {
                 text: qsTr("上限")
                 color: themeColors.clrSubText || "#64748B"
-                font.pixelSize: 12
-                Layout.preferredWidth: 28
+                font.family: AppFont.family
+                font.pixelSize: AppFont.label
+                Layout.preferredWidth: 32
             }
 
             FlatTextField {
@@ -141,8 +148,9 @@ CollapsiblePanel {
             Text {
                 text: qsTr("V/m")
                 color: themeColors.clrSubText || "#94A3B8"
-                font.pixelSize: 11
-                Layout.preferredWidth: 24
+                font.family: AppFont.family
+                font.pixelSize: AppFont.caption
+                Layout.preferredWidth: 28
             }
         }
 
@@ -153,8 +161,9 @@ CollapsiblePanel {
             Text {
                 text: qsTr("下限")
                 color: themeColors.clrSubText || "#64748B"
-                font.pixelSize: 12
-                Layout.preferredWidth: 28
+                font.family: AppFont.family
+                font.pixelSize: AppFont.label
+                Layout.preferredWidth: 32
             }
 
             FlatTextField {
@@ -172,8 +181,9 @@ CollapsiblePanel {
             Text {
                 text: qsTr("V/m")
                 color: themeColors.clrSubText || "#94A3B8"
-                font.pixelSize: 11
-                Layout.preferredWidth: 24
+                font.family: AppFont.family
+                font.pixelSize: AppFont.caption
+                Layout.preferredWidth: 28
             }
         }
     }

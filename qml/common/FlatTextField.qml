@@ -1,15 +1,17 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
+import MagFont 1.0
 
 TextField {
     id: root
 
     property var themeColors: ({})
     property bool hasError: false
-    property int ctlHeight: 38
+    property int ctlHeight: AppFont.ctlHeight
 
     implicitHeight: ctlHeight
-    font.pixelSize: 14
+    font.family: AppFont.family
+    font.pixelSize: AppFont.body
     color: themeColors.clrText || "#334155"
     selectionColor: themeColors.clrPrimary || "#3B82F6"
     selectedTextColor: "#FFFFFF"

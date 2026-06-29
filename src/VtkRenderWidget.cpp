@@ -234,7 +234,7 @@ void VtkRenderWidget::setupFpsOverlay()
     m_fpsAnnotation = vtkSmartPointer<vtkCornerAnnotation>::New();
     m_fpsAnnotation->SetLinearFontScaleFactor(2);
     m_fpsAnnotation->SetNonlinearFontScaleFactor(1);
-    m_fpsAnnotation->SetMaximumFontSize(14);
+    m_fpsAnnotation->SetMaximumFontSize(18);
     m_fpsAnnotation->GetTextProperty()->SetColor(0.22, 0.28, 0.38);
     m_fpsAnnotation->GetTextProperty()->SetBold(1);
     m_fpsAnnotation->GetTextProperty()->SetShadow(1);
@@ -428,19 +428,25 @@ bool VtkRenderWidget::reloadSceneMeshes(QString *errorMessage)
         return false;
     }
 
-    if (m_headActor && m_headActor->GetMapper()) {
-        m_headActor->GetMapper()->SetInputData(headData);
+    if (m_headActor) {
+        if (auto *mapper = vtkPolyDataMapper::SafeDownCast(m_headActor->GetMapper())) {
+            mapper->SetInputData(headData);
+        }
         applyHeadMaterial();
     }
-    if (m_coilActor && m_coilActor->GetMapper()) {
-        m_coilActor->GetMapper()->SetInputData(coilData);
+    if (m_coilActor) {
+        if (auto *mapper = vtkPolyDataMapper::SafeDownCast(m_coilActor->GetMapper())) {
+            mapper->SetInputData(coilData);
+        }
         applySurfaceQuality(m_coilActor, m_coilOpacity, false);
     }
 
     m_brainPolyData = brainData;
     m_fieldSimulator.resetBrainColors(m_brainPolyData);
-    if (m_brainActor && m_brainActor->GetMapper()) {
-        m_brainActor->GetMapper()->SetInputData(m_brainPolyData);
+    if (m_brainActor) {
+        if (auto *mapper = vtkPolyDataMapper::SafeDownCast(m_brainActor->GetMapper())) {
+            mapper->SetInputData(m_brainPolyData);
+        }
         applySurfaceQuality(m_brainActor, m_brainOpacity, false);
     }
 

@@ -1,5 +1,6 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
+import MagFont 1.0
 
 Column {
     id: root
@@ -23,11 +24,12 @@ Column {
 
         Text {
             text: label
-            width: 28
+            width: 32
             color: themeColors.clrSubText || "#64748B"
-            font.pixelSize: 12
+            font.family: AppFont.family
+            font.pixelSize: AppFont.label
             verticalAlignment: Text.AlignVCenter
-            height: 20
+            height: 22
         }
 
         Slider {
@@ -36,8 +38,8 @@ Column {
             to: root.to
             value: root.value
             enabled: root.sliderEnabled
-            width: parent.width - 28 - 8 - valueLabel.implicitWidth - 8
-            height: 24
+            width: parent.width - 32 - 8 - valueLabel.implicitWidth - 8
+            height: 26
 
             onMoved: root.value = Math.round(value)
             onValueChanged: if (!pressed) root.value = Math.round(value)
@@ -62,9 +64,9 @@ Column {
             handle: Rectangle {
                 x: slider.leftPadding + slider.visualPosition * (slider.availableWidth - width)
                 y: slider.topPadding + slider.availableHeight / 2 - height / 2
-                implicitWidth: 16
-                implicitHeight: 16
-                radius: 8
+                implicitWidth: 18
+                implicitHeight: 18
+                radius: 9
                 color: "#FFFFFF"
                 border.width: 2
                 border.color: accent ? "#38BDF8" : (themeColors.clrPrimary || "#3B82F6")
@@ -75,12 +77,13 @@ Column {
             id: valueLabel
             text: suffix.length ? (value + suffix) : String(value)
             color: themeColors.clrText || "#334155"
-            font.pixelSize: 12
+            font.family: AppFont.family
+            font.pixelSize: AppFont.label
             font.bold: true
-            width: 44
+            width: 48
             horizontalAlignment: Text.AlignRight
             verticalAlignment: Text.AlignVCenter
-            height: 20
+            height: 22
         }
     }
 }
